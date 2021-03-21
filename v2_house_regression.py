@@ -53,7 +53,7 @@ all_data = handle_categorical_features(df_train, df_test)
     how this data is related to sales price. 
 '''
 
-understanding_data(all_data)
+understanding_data(all_data, df_train, df_test)
 
     
 
