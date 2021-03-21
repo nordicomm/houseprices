@@ -20,34 +20,53 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+
+
 ''' /* Division from the main code */ '''
 
-def understanding_missing_data(df):
+def understanding_missing_data(df_train, df_test):
     '''
     In order to understand missing data, we follow following steps:
         i. understand the data
     '''
+
     
     # **********************
     # i. understand the data
     
-    # print(df.shape) # (1460, 81)
+    # print(df_train.shape) # (1460, 81)
+    # print(df_test.shape) # (1460, 80) SalePrice data is missing
     
-    missing_data_in_numbers = df.isnull().sum().sort_values(ascending=False)
+    missing_train_data = find_missing_data(df_train)
+    missing_test_data = find_missing_data(df_test)
     
-    # calculating percentage as well
-    missing_data_in_percent = (df.isnull().sum() / 
-                               df.isnull().count() * 
-                               100).sort_values(ascending=False)
+    fill_and_drop_missing_data(df_train, missing_train_data, df_test, missing_test_data)
     
-    # concatinating the missing data in numbers and percent
-    missing_data = pd.concat([missing_data_in_numbers, 
-                              missing_data_in_percent], 
-                             axis=1, 
-                             keys=['Total', 'Percent'])
     
-    # print(missing_data.head(20))
+    
+    
+''' ******************************************'''
+
+#function
+def fill_and_drop_missing_data(df_train, missing_train_data, df_test, missing_test_data):
     '''
+    first analyzing training , and test data: 
+        Key results: 
+            - 
+    '''
+    #print(missing_train_data.index)
+    
+    missing_index = ['PoolQC', 'MiscFeature', 'Alley', 'Fence', 
+                     'FireplaceQu', 
+                     'LotFrontage',
+                     'GarageCond', 'GarageType', 'GarageYrBlt', 'GarageFinish', 'GarageQual',
+                     'BsmtExposure', 'BsmtFinType2', 'BsmtFinType1', 'BsmtCond', 'BsmtQual',
+                     'MasVnrArea', 'MasVnrType',
+                     'Electrical']
+    
+    '''
+    Analyzing Training Data df_train
+    
                   Total    Percent
     PoolQC         1453  99.520548
     MiscFeature    1406  96.301370
@@ -73,20 +92,106 @@ def understanding_missing_data(df):
     It does seem like (PoolQC, MiscFeature, Alley, Fence, FireplaceQU, LotFrontage)
     might not be useful as they have quite high numbers of missing data. 
     
-    Let's see what kind of of significance they have with sales data. '
+    Let's see what kind of of significance they have with sales data.
+    
+    PoolQC: (remove)
+        There are only 7 datapoints available. It could be removed. 
+    
+    MiscFeature: (remove)
+        
+    Alley: (Keeping) -> next step, one-hot encoding
+        two options, pave and gravel. It seems like that houses with the 
+        indications on Pave are in a little higher range than the houses in gravel. 
+        we do need additional help for the house between sales price of 200K-300K. 
+        
+    Fence: (Keeping -> GdPrv and its effect on the price)
+        GdPrv (Good privacy) does effect the price a bit higher 
+        where it is dealing with the same area
+    
+    FireplaceQu: (Keepting -> Ex and its effect on the price)
+        Ex - Excellent and exceptional masonary fireplace effect the price majorly for the similar size house. 
+    
+    LotFrontage: (Pending)
+        Linear feet connected to the street have a linear relationship 
+        with the LotArea under 25000. 
+        
+    Garage Data: (Keeping) -> This data will need further one-hot encoding investigation, before we use it. 
+    
     '''
     
-    # **********************
     # ii. what is the effect of really high percentage of missing data. 
     
-    var = 'PoolQC'
-    data = pd.concat([df['LotArea'], df[var]], axis=1)
-    f, ax = plt.subplots(figsize=(8, 6))
-    fig = sns.boxplot(x=var, y="LotArea", data=data)
-    fig.axis(ymin=0, ymax=100000);
+    # checking the box plot for every variable sale price
+    # var = 'GarageCond'
+    # data = pd.concat([df['SalePrice'], df[var]], axis=1)
+    # f, ax = plt.subplots(figsize=(8, 6))
+    # fig = sns.boxplot(x=var, y="SalePrice", data=data)
+    # fig.axis(ymin=0, ymax=800000);
+    
+    # checking the box plat with LotArea,... seeting variable impact with area, and saleprice. 
+    # assumption if there is a price difference with same area and some sort of indication in the variable
+    # its worth keeping it. 
+    
+    # data = pd.concat([df['LotArea'], df[var]], axis=1)
+    # f, ax = plt.subplots(figsize=(8, 6))
+    # fig = sns.boxplot(x=var, y="LotArea", data=data)
+    # fig.axis(ymin=0, ymax=100000);
+    
+    # removing two variables. 
+    
+    # reason, insufficient amount of data in both train and test data
+    drop_list_train = ['PoolQC', 'MiscFeature', 'Alley', 'Fence']
+        
+    # dropping the train varialbles
+    df_train.drop(drop_list_train, axis=1, inplace=True)
+    
+    # remove the dropping list from the missing list
+    missing_index = list(set(missing_index) - set(drop_list_train))
     
     
+    # filling in the missing places.
+    for idx in missing_index: 
+        if df_train[idx].dtypes == "object":
+            df_train[idx] = df_train[idx].fillna(df_train[idx].mode()[0])
+        
+        else: 
+            df_train[idx] = df_train[idx].fillna(df_train[idx].mean())
+    
+    # print(df_train.shape)
+    # print(df_train.isnull().sum().sum()) # equal to zero, if there are no missing values. 
+    
+    # printing heatmap to see if there are any variables with missing values. 
+    #sns.heatmap(df_train.isnull(),yticklabels=False,cbar=False,cmap='coolwarm')
+    
+   
+    
+    '''
+    Understanding the testing data as well. 
+    '''
+    
+#function
+def find_missing_data(df):
+    '''
+    This function will take the dataframe, and return:
+        - missing data concatinated as 
+            - missing_data_in_numbers
+            - missing_data_in_percent
+    
+    '''
+    missing_data_in_numbers = df.isnull().sum().sort_values(ascending=False)
+    
+    # calculating percentage as well
+    missing_data_in_percent = (df.isnull().sum() / 
+                               df.isnull().count() * 
+                               100).sort_values(ascending=False)
+    
+    # concatinating the missing data in numbers and percent
+    missing_data = pd.concat([missing_data_in_numbers, 
+                              missing_data_in_percent], 
+                             axis=1, 
+                             keys=['Total', 'Percent'])
     
     
-    
+    return missing_data
+
     
