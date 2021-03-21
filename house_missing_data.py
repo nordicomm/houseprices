@@ -1,6 +1,14 @@
 # -*- coding: utf-8 -*-
 
+
 '''
+    Summary: name and functions
+    house_missing_data.py
+        understanding_missing_data
+        fill_and_drop_missing_data
+        find_missing_data
+    
+    Details:
     This file enclosed all the investigation related to the missing data. 
     
     Important questions when thinking about missing data:
