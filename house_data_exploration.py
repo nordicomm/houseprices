@@ -59,6 +59,9 @@ def understanding_data(all_data, train_old, test_old):
     df_train = all_data.iloc[:len(train_old), :]
     df_test = all_data.iloc[len(train_old):, :]
     
+    #drop the SalePrice data from df_test
+    df_test.drop(['SalePrice'], axis = 1, inplace = True)
+    
     return df_train, df_test
     
     # corrmat = df_train.corr()
