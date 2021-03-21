@@ -3,6 +3,8 @@
 '''
     Summary: name and functions
         house_categorical_features.py
+            handle_categorical_features
+            category_to_one_hot_simple
 
     Details:
     Processing the Categorical feature and:

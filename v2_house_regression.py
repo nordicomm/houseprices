@@ -16,6 +16,7 @@ import matplotlib.pyplot as plt
 #function files created to support
 from house_missing_data import *
 from house_categorical_features import *
+from house_data_exploration import *
 
 
 '''
@@ -41,8 +42,18 @@ df_train, df_test = understanding_missing_data(train, test)
     We have quite many categorical feature in the data, and we need to
     analyze and convert them before using them into our movel.
     
+    For this purpose, we have concatinated both train and test data together
+    
 '''
 all_data = handle_categorical_features(df_train, df_test)
+
+
+'''
+    4- After processing the data now, we will try to figure out, 
+    how this data is related to sales price. 
+'''
+
+understanding_data(all_data)
 
     
 
