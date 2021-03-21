@@ -42,7 +42,8 @@ df_train, df_test = understanding_missing_data(train, test)
     analyze and convert them before using them into our movel.
     
 '''
-handle_categorical_features(df_train, df_test)
+all_data = handle_categorical_features(df_train, df_test)
+
     
 
 
