@@ -34,7 +34,7 @@ test = pd.read_csv("./test.csv")
     
 '''
 
-understanding_missing_data(train, test)
+df_train, df_test = understanding_missing_data(train, test)
     
 '''
     3- handle categorical feature before processing.
@@ -42,7 +42,7 @@ understanding_missing_data(train, test)
     analyze and convert them before using them into our movel.
     
 '''
-handle_categorical_features(df_train)
+handle_categorical_features(df_train, df_test)
     
 
 

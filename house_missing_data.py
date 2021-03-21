@@ -52,12 +52,12 @@ def understanding_missing_data(train, test):
         df_train = pd.read_csv("./train_formulated.csv")
         print("Missing analysis already done for train:-) ")
         print("df_train.shape: ", df_train.shape)
-        print(df_train.head(10))
+        #print(df_train.head(10))
     
         df_test = pd.read_csv("./test_formulated.csv")
         print("Missing analysis already done for test :-) ")
         print("df_test.shape: ", df_test.shape)
-        print(df_test.head(10))
+        #print(df_test.head(10))
     
     else: 
         # i. understand the data

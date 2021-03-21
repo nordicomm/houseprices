@@ -21,13 +21,28 @@ import matplotlib.pyplot as plt
 
 
 
-def handle_categorical_features(df_train):
+def handle_categorical_features(df_train, df_test):
     '''
         find the categorical features in the dataset, and having insights about them.
+        
+        Important: we will concatinate the training and testing data, in order to have same labeling.
     '''
     
-    category_features_index = df_train.dtypes[df_train.dtypes == "object"].index
-    # print(len(category_features_index)) # 39 variables
+    # concatinating both data points: 
+    all_data = pd.concat([df_train, df_test], axis=0)
+    # print(all_data.shape) # (2919, 77) end result
     
+    #taking the categories and doing multicolumns onehot encoding
+    category_to_one_hot_simple(all_data)
+    
+    
+#function
+def category_to_one_hot_simple(df):
+    '''
+        converting all category features into one-hot
+    
+    '''
+    category_features_index = df.dtypes[df.dtypes == "object"].index
+    print(len(category_features_index)) # 39 variables
     
     
