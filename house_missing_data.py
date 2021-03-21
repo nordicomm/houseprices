@@ -28,31 +28,57 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-
+# checking the path of the file
+from os import path
 
 ''' /* Division from the main code */ '''
 
-def understanding_missing_data(df_train, df_test):
+def understanding_missing_data(train, test):
     '''
     In order to understand missing data, we follow following steps:
         i. understand the data
     '''
+    df_train = train
+    df_test = test
+    
+    # checking if missing variable analysis has already been done. 
+    train_f = 'train_formulated.csv'
+    test_f = 'train_formulated.csv'
+    
+    check_train_path = path.exists(train_f)
+    check_test_path = path.exists(test_f)
 
+    if  check_train_path and check_test_path == True:
+        df_train = pd.read_csv("./train_formulated.csv")
+        print("Missing analysis already done for train:-) ")
+        print("df_train.shape: ", df_train.shape)
+        print(df_train.head(10))
     
-    # **********************
-    # i. understand the data
+        df_test = pd.read_csv("./test_formulated.csv")
+        print("Missing analysis already done for test :-) ")
+        print("df_test.shape: ", df_test.shape)
+        print(df_test.head(10))
     
-    # print(df_train.shape) # (1460, 81)
-    # print(df_test.shape) # (1460, 80) SalePrice data is missing
-    
-    missing_train_data = find_missing_data(df_train)
-    missing_test_data = find_missing_data(df_test)
-    
-    # dropping and filling the missing data
-    fill_and_drop_missing_data(df_train, missing_train_data)
-    fill_and_drop_missing_data(df_test, missing_test_data)
+    else: 
+        # i. understand the data
+        # print(df_train.shape) # (1460, 81)
+        # print(df_test.shape) # (1460, 80) SalePrice data is missing
+        
+        missing_train_data = find_missing_data(df_train)
+        missing_test_data = find_missing_data(df_test)
+        
+        # dropping and filling the missing data
+        fill_and_drop_missing_data(df_train, missing_train_data)
+        fill_and_drop_missing_data(df_test, missing_test_data)
+        
+        #checking the heatmap, if there is any value missing
+        #sns.heatmap(train.isnull(),yticklabels=False,cbar=False,cmap='coolwarm')
+        
+        df_train.to_csv('train_formulated.csv', index=False)
+        df_test.to_csv('test_formulated.csv', index=False)
+        
 
-    
+    return df_train, df_test
     
     
 ''' ******************************************'''
