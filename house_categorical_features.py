@@ -30,3 +30,4 @@ def handle_categorical_features(df_train):
     # print(len(category_features_index)) # 39 variables
     
     
+    

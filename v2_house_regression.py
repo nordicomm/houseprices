@@ -38,20 +38,31 @@ test = pd.read_csv("./test.csv")
 '''
 # checking if missing variable analysis has already been done. 
 formulated_train = 'train_forumulated.csv'
+check_path = path.exists(formulated_train) 
 
-if path.exists(formulated_train) == False:
+if  check_path == False:
     understanding_missing_data(train, test)
+    
     #checking the heatmap, if there is any value missing
-    
     sns.heatmap(train.isnull(),yticklabels=False,cbar=False,cmap='coolwarm')
-    train.to_csv('train_forumulated.csv', index=False)
     
+    train.to_csv('train_formulated.csv', index=False)
+    train.to_csv('test_formulated.csv', index=False)
+
+    # making a copy, and processing forward with it
     df_train = train
+    df_test = test
 
 else: 
-    df_train = pd.read_csv("./train_forumulated.csv")
+    df_train = pd.read_csv("./train_formulated.csv")
     print("Missing analysis already done :-) ")
-    print("df_traing.shape: ", df_train.shape)
+    print("df_train.shape: ", df_train.shape)
+    print(df_test.head(10))
+
+    df_test = pd.read_csv("./test_formulated.csv")
+    print("Missing analysis already done :-) ")
+    print("df_test.shape: ", df_test.shape)
+    print(df_test.head(10))
 
     
 
@@ -61,7 +72,7 @@ else:
     analyze and convert them before using them into our movel.
     
 '''
-handle_categorical_features(train)
+handle_categorical_features(df_train)
     
 
 

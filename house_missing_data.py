@@ -48,29 +48,26 @@ def understanding_missing_data(df_train, df_test):
     missing_train_data = find_missing_data(df_train)
     missing_test_data = find_missing_data(df_test)
     
-    fill_and_drop_missing_data(df_train, missing_train_data, df_test, missing_test_data)
-    
+    # dropping and filling the missing data
+    fill_and_drop_missing_data(df_train, missing_train_data)
+    fill_and_drop_missing_data(df_test, missing_test_data)
+
     
     
     
 ''' ******************************************'''
 
 #function
-def fill_and_drop_missing_data(df_train, missing_train_data, df_test, missing_test_data):
+def fill_and_drop_missing_data(df, missing_train_data):
     '''
     first analyzing training , and test data: 
         Key results: 
             - 
     '''
-    #print(missing_train_data.index)
+    print(missing_train_data.head(25))
     
-    missing_index = ['PoolQC', 'MiscFeature', 'Alley', 'Fence', 
-                     'FireplaceQu', 
-                     'LotFrontage',
-                     'GarageCond', 'GarageType', 'GarageYrBlt', 'GarageFinish', 'GarageQual',
-                     'BsmtExposure', 'BsmtFinType2', 'BsmtFinType1', 'BsmtCond', 'BsmtQual',
-                     'MasVnrArea', 'MasVnrType',
-                     'Electrical']
+    missing_index = (missing_train_data[missing_train_data['Total'] > 0]).index
+    
     
     '''
     Analyzing Training Data df_train
@@ -148,10 +145,11 @@ def fill_and_drop_missing_data(df_train, missing_train_data, df_test, missing_te
     # removing two variables. 
     
     # reason, insufficient amount of data in both train and test data
-    drop_list_train = ['PoolQC', 'MiscFeature', 'Alley', 'Fence']
-        
+    drop_list_train = (missing_train_data[missing_train_data['Percent'] > 60]).index
+    print(drop_list_train)
+
     # dropping the train varialbles
-    df_train.drop(drop_list_train, axis=1, inplace=True)
+    df.drop(drop_list_train, axis=1, inplace=True)
     
     # remove the dropping list from the missing list
     missing_index = list(set(missing_index) - set(drop_list_train))
@@ -159,11 +157,11 @@ def fill_and_drop_missing_data(df_train, missing_train_data, df_test, missing_te
     
     # filling in the missing places.
     for idx in missing_index: 
-        if df_train[idx].dtypes == "object":
-            df_train[idx] = df_train[idx].fillna(df_train[idx].mode()[0])
+        if df[idx].dtypes == "object":
+            df[idx] = df[idx].fillna(df[idx].mode()[0])
         
         else: 
-            df_train[idx] = df_train[idx].fillna(df_train[idx].mean())
+            df[idx] = df[idx].fillna(df[idx].mean())
     
     # print(df_train.shape)
     # print(df_train.isnull().sum().sum()) # equal to zero, if there are no missing values. 
