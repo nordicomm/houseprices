@@ -21,7 +21,10 @@ import matplotlib.pyplot as plt
 
 # libraries to run the regularization
 from sklearn.linear_model import Ridge, RidgeCV, ElasticNet, LassoCV, LassoLarsCV
-from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import cross_val_score, RandomizedSearchCV
+
+# libraries for xgboost
+import xgboost
 
 def rmse_cv(model, X_train, y):
     ''' rmse calculation model taken from internet'''
@@ -36,7 +39,7 @@ def data_regularization(df_train, df_test):
     print("regularization section: ", df_train.shape)
 
     #creating matrices for sklearn:
-    X_train = df_train
+    X_train = df_train.drop(['SalePrice'],axis=1)
     X_test =  df_test
     y = df_train['SalePrice']
     
@@ -44,7 +47,9 @@ def data_regularization(df_train, df_test):
     # print(X_test.head())
     # print(y)
     
-    ridge_model(X_train, y)
+    cv_ridge = ridge_model(X_train, y)
+    
+    xgboost_model(X_train, y, cv_ridge, X_test)
     
 def ridge_model(X_train, y):
     ''' 
@@ -64,6 +69,62 @@ def ridge_model(X_train, y):
     cv_ridge.plot(title = "Validation - Just Do It")
     plt.xlabel("alpha")
     plt.ylabel("rmse")
+    
+    print(cv_ridge.min())
+    return cv_ridge
+    
+    
+def xgboost_model(X_train, y, cv_ridge, X_test):
+    '''
+    Prediction and selecting the model
+    '''
+    classifier = xgboost.XGBRegressor()
+    regressor = xgboost.XGBRegressor()
+    
+    booster=['gbtree','gblinear']
+    base_score=[0.25,0.5,0.75,1]
+    
+    # hyper parameter optimization
+    n_estimators = [100, 500, 900, 1100, 1500]
+    max_depth = [2, 3, 5, 10, 15]
+    booster=['gbtree','gblinear']
+    learning_rate=[0.05,0.1,0.15,0.20]
+    min_child_weight=[1,2,3,4]
+    
+    # Define the grid of hyperparameters to search
+    hyperparameter_grid = {
+        'n_estimators': n_estimators,
+        'max_depth':max_depth,
+        'learning_rate':learning_rate,
+        'min_child_weight':min_child_weight,
+        'booster':booster,
+        'base_score':base_score
+        }
+    
+    random_cv = RandomizedSearchCV(estimator=regressor,
+            param_distributions=hyperparameter_grid,
+            cv=5, n_iter=50,
+            scoring = 'neg_mean_absolute_error',n_jobs = 4,
+            verbose = 5, 
+            return_train_score = True,
+            random_state=42)
+    
+    random_cv.fit(X_train,y)
+    print(random_cv.best_estimator_)
+    
+    regressor=xgboost.XGBRegressor(base_score=0.25, booster='gbtree', colsample_bylevel=1,
+       colsample_bytree=1, gamma=0, learning_rate=0.1, max_delta_step=0,
+       max_depth=2, min_child_weight=1, missing=None, n_estimators=900,
+       n_jobs=1, nthread=None, objective='reg:linear', random_state=0,
+       reg_alpha=0, reg_lambda=1, scale_pos_weight=1, seed=None,
+       silent=True, subsample=1)
+    
+    regressor.fit(X_train,y)
+
+    y_pred=regressor.predict(X_test)
+    
+    print(y_pred)
+
     
     
     
