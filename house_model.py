@@ -57,7 +57,7 @@ def data_regularization(df_train, df_test, redo_modeling_flag):
     
     # if you want to redo the model
     
-    pridct_y = xgboost_model(X_train, y, cv_ridge, X_test, redo_modeling_flag)
+    pridct_y = xgboost_model(X_train, y, X_test, redo_modeling_flag)
     
     return pridct_y
     
@@ -76,7 +76,7 @@ def ridge_model(X_train, y):
     cv_ridge = [rmse_cv(Ridge(alpha = alpha), X_train, y).mean() for alpha in alphas]
     
     cv_ridge = pd.Series(cv_ridge, index = alphas)
-    cv_ridge.plot(title = "Validation - Just Do It")
+    cv_ridge.plot(title = "Validation")
     plt.xlabel("alpha")
     plt.ylabel("rmse")
     
@@ -84,7 +84,7 @@ def ridge_model(X_train, y):
     return cv_ridge
     
     
-def xgboost_model(X_train, y, cv_ridge, X_test, redo_modeling_flag ):
+def xgboost_model(X_train, y, X_test, redo_modeling_flag ):
     '''
     Prediction and selecting the model
     '''

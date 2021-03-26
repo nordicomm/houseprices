@@ -43,7 +43,7 @@ def understanding_missing_data(train, test):
     
     # checking if missing variable analysis has already been done. 
     train_f = 'train_formulated.csv'
-    test_f = 'train_formulated.csv'
+    test_f = 'test_formulated.csv'
     
     check_train_path = path.exists(train_f)
     check_test_path = path.exists(test_f)

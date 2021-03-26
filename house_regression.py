@@ -67,16 +67,23 @@ df_train_n, df_test_n = understanding_data(all_data, df_train, df_test)
 '''
 
 # redo model flag set "True" will make us repeat the regression again. 
-redo_modeling_flag = False
+redo_modeling_flag = True
 
 y_pred = data_regularization(df_train_n, df_test_n, redo_modeling_flag)
 
 sns.distplot(y_pred);
 
 '''
-    
+    6- saving the results into submission file. 
 
 '''
+
+pred = pd.DataFrame(y_pred)
+
+read_sub_df=pd.read_csv('sample_submission.csv')
+datasets=pd.concat([read_sub_df['Id'],pred],axis=1)
+datasets.columns=['Id','SalePrice']
+datasets.to_csv('sample_submission.csv',index=False)
 
     
 
