@@ -66,7 +66,17 @@ df_train_n, df_test_n = understanding_data(all_data, df_train, df_test)
 
 '''
 
-data_regularization(df_train_n, df_test_n)
+# redo model flag set "True" will make us repeat the regression again. 
+redo_modeling_flag = False
+
+y_pred = data_regularization(df_train_n, df_test_n, redo_modeling_flag)
+
+sns.distplot(y_pred);
+
+'''
+    
+
+'''
 
     
 
