@@ -22,6 +22,8 @@ import matplotlib.pyplot as plt
 # libraries to run the regularization
 from sklearn.linear_model import Ridge, RidgeCV, ElasticNet, LassoCV, LassoLarsCV
 from sklearn.model_selection import cross_val_score, RandomizedSearchCV
+from sklearn.linear_model import Lasso # Lasso algorithm
+
 
 # libraries for xgboost
 import xgboost
@@ -32,13 +34,16 @@ import pickle
 # checking the path of the file
 from os import path
 
+# matplot
+import matplotlib
+
 def rmse_cv(model, X_train, y):
     ''' rmse calculation model taken from internet'''
     rmse= np.sqrt(-cross_val_score(model, X_train, y, scoring="neg_mean_squared_error", cv = 5))
     return(rmse)
 
 
-def data_regularization(df_train, df_test, redo_modeling_flag):
+def data_regularization(df_train, df_test, redo_modeling_flag, model_number):
     '''
     regularization of data
     '''
@@ -53,13 +58,90 @@ def data_regularization(df_train, df_test, redo_modeling_flag):
     # print(X_test.head())
     # print(y)
     
-    pridct_y = ridge_model(X_train, y, X_test)
+    # running models
+    predict_y = y
     
-    # if you want to redo the model
+    if model_number % 10 == 1:
+        predict_y_ridge = ridge_model(X_train, y, X_test)
+        predict_y = predict_y_ridge
     
-    # pridct_y = xgboost_model(X_train, y, X_test, redo_modeling_flag)
+    if int(model_number / 10) == 1:
+        predict_y_xgb = xgboost_model(X_train, y, X_test, redo_modeling_flag)
+        predict_y = predict_y_xgb
+        
+    if int(model_number / 100) == 1:
+        predict_y_lasso = lasso_model(X_train, y, X_test)
+        predict_y = predict_y_lasso
+        
+    if int(model_number / 1000) == 1:
+        predict_y_elasticn = elasticn_model(X_train, y, X_test)
+        predict_y = predict_y_elasticn
+
     
-    return pridct_y
+    return predict_y
+
+# end of data regularization function
+
+def lasso_model(X_train, y, X_test):
+    '''
+    Lasso Model
+    '''
+    model_lasso = Lasso(0.0002).fit(X_train, y)
+    #print(rmse_cv(model_lasso).mean())
+    
+    alphas = [0.0005, 0.0004, 0.0003, 0.0002, 0.0001, 0.001]
+    cv_en = [rmse_cv(Lasso(alpha = alpha), X_train, y).mean() for alpha in alphas]
+    
+    cv_en = pd.Series(cv_en, index = alphas)
+    cv_en.plot(title = "Validation")
+    plt.xlabel("alpha")
+    plt.ylabel("rmse")
+    
+    coef = pd.Series(model_lasso.coef_, index = X_train.columns)
+    print("Lasso picked " + str(sum(coef != 0)) + " variables and eliminated the other " +  str(sum(coef == 0)) + " variables")
+
+    # imp_coef = pd.concat([coef.sort_values().head(10),
+    #                  coef.sort_values().tail(10)])
+    
+    # matplotlib.rcParams['figure.figsize'] = (8.0, 10.0)
+    # imp_coef.plot(kind = "barh")
+    # plt.title("Coefficients in the Lasso Model")
+    
+    
+    lasso_yhat = np.expm1(model_lasso.predict(X_test))
+    pred = pd.DataFrame(lasso_yhat)
+    
+    print(pred.head(20))
+        
+    return pred
+
+
+def elasticn_model(X_train, y, X_test):
+    '''
+    Elastic N Model
+    '''
+    #alphas = [0.05, 0.1, 0.3, 1, 3, 5, 10, 15, 30, 50, 75]
+    alphas = np.arange(0.0, 0.1, 0.01)
+    cv_en = [rmse_cv(ElasticNet(alpha = alpha), X_train, y).mean() for alpha in alphas]
+    
+    cv_en = pd.Series(cv_en, index = alphas)
+    cv_en.plot(title = "Validation")
+    plt.xlabel("alpha")
+    plt.ylabel("rmse")
+    
+    print(cv_en.min())
+    
+    en_c = ElasticNet(0.01)
+    en_c.fit(X_train, y)
+    en_yhat = np.expm1(en_c.predict(X_test))
+    
+    
+    pred = pd.DataFrame(en_yhat)
+    
+    print(pred.head(20))
+        
+    return pred
+
     
 def ridge_model(X_train, y, X_test):
     ''' 
@@ -84,9 +166,11 @@ def ridge_model(X_train, y, X_test):
     ridge_c.fit(X_train, y)
     ridge_yhat = np.expm1(ridge_c.predict(X_test))
     
+    
     pred = pd.DataFrame(ridge_yhat)
     print(cv_ridge.min())
     print(pred.head(20))
+    
     return pred
     
     

@@ -63,13 +63,23 @@ df_train_n, df_test_n = understanding_data(all_data, df_train, df_test)
     module:
         - Lasso regularization
         - Ridge regularization
+    
+    Model Number: defines which model, we will be running here. 
+    Ridge Model             1
+    XGB Model              10
+    Lasso Model           100    
+    Elastic Net Model    1000
 
 '''
 
 # redo model flag set "True" will make us repeat the regression again. 
 redo_modeling_flag = True
+model_number = 100
 
-y_pred = data_regularization(df_train_n, df_test_n, redo_modeling_flag)
+# model number: change the model number here
+
+
+y_pred = data_regularization(df_train_n, df_test_n, redo_modeling_flag, model_number)
 
 #sns.distplot(y_pred);
 
