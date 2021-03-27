@@ -53,15 +53,15 @@ def data_regularization(df_train, df_test, redo_modeling_flag):
     # print(X_test.head())
     # print(y)
     
-    cv_ridge = ridge_model(X_train, y)
+    pridct_y = ridge_model(X_train, y, X_test)
     
     # if you want to redo the model
     
-    pridct_y = xgboost_model(X_train, y, X_test, redo_modeling_flag)
+    # pridct_y = xgboost_model(X_train, y, X_test, redo_modeling_flag)
     
     return pridct_y
     
-def ridge_model(X_train, y):
+def ridge_model(X_train, y, X_test):
     ''' 
     The main tuning parameter for the Ridge model is alpha - a 
     regularization parameter that measures how flexible our model is. 
@@ -80,8 +80,14 @@ def ridge_model(X_train, y):
     plt.xlabel("alpha")
     plt.ylabel("rmse")
     
+    ridge_c = Ridge(4)
+    ridge_c.fit(X_train, y)
+    ridge_yhat = np.expm1(ridge_c.predict(X_test))
+    
+    pred = pd.DataFrame(ridge_yhat)
     print(cv_ridge.min())
-    return cv_ridge
+    print(pred.head(20))
+    return pred
     
     
 def xgboost_model(X_train, y, X_test, redo_modeling_flag ):

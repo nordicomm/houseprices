@@ -71,7 +71,7 @@ redo_modeling_flag = True
 
 y_pred = data_regularization(df_train_n, df_test_n, redo_modeling_flag)
 
-sns.distplot(y_pred);
+#sns.distplot(y_pred);
 
 '''
     6- saving the results into submission file. 
