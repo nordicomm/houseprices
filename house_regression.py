@@ -36,7 +36,13 @@ test = pd.read_csv("./test.csv")
     
 '''
 
-df_train, df_test = understanding_missing_data(train, test)
+calculate_flag = True
+df_train, df_test = understanding_missing_data(train, test, calculate_flag)
+
+# df_train_1, df_train_2 = further_understanding(df_train)
+# df_test_1, df_test_2 = further_understanding(df_test)
+
+
     
 '''
     3- handle categorical feature before processing.
@@ -46,7 +52,9 @@ df_train, df_test = understanding_missing_data(train, test)
     For this purpose, we have concatinated both train and test data together
     
 '''
-all_data = handle_categorical_features(df_train, df_test)
+# all_data_1 = handle_categorical_features(df_train_2, df_test_2)
+# all_data_2 = handle_categorical_features(df_train_2, df_test_2)
+all_data_complete = handle_categorical_features(df_train, df_test)
 
 
 '''
@@ -54,7 +62,12 @@ all_data = handle_categorical_features(df_train, df_test)
     how this data is related to sales price. 
 '''
 
-df_train_n, df_test_n = understanding_data(all_data, df_train, df_test)
+
+# df_train_n1, df_test_n1 = understanding_data(all_data_1, df_train_1, df_test_1)
+# df_train_n2, df_test_n2 = understanding_data(all_data_1, df_train_2, df_test_2)
+df_train_n, df_test_n = understanding_data(all_data_complete, df_train, df_test)
+
+
 
 # next todo,... build a model and run the code from it. 
 '''
@@ -79,8 +92,17 @@ model_number = 100
 # model number: change the model number here
 
 
+# y_pred_1 = data_regularization(df_train_n1, df_test_n1, redo_modeling_flag, model_number)
+# y_pred_2 = data_regularization(df_train_n2, df_test_n2, redo_modeling_flag, model_number)
 y_pred = data_regularization(df_train_n, df_test_n, redo_modeling_flag, model_number)
 
+# y_pred_append = y_pred_1.append(y_pred_2, ignore_index = True)
+# y_pred_append = y_pred_append.sort_values(by = ['Id'])
+
+# print(y_pred_append.head(10))
+# print(y_pred_append.tail(10))
+
+      
 #sns.distplot(y_pred);
 
 '''
@@ -88,12 +110,12 @@ y_pred = data_regularization(df_train_n, df_test_n, redo_modeling_flag, model_nu
 
 '''
 
-pred = pd.DataFrame(y_pred)
+# pred = pd.DataFrame(y_pred)
 
-read_sub_df=pd.read_csv('sample_submission.csv')
-datasets=pd.concat([read_sub_df['Id'],pred],axis=1)
-datasets.columns=['Id','SalePrice']
-datasets.to_csv('sample_submission.csv',index=False)
+# read_sub_df=pd.read_csv('sample_submission.csv')
+# datasets=pd.concat([read_sub_df['Id'],pred],axis=1)
+# datasets.columns=['Id','SalePrice']
+# datasets.to_csv('sample_submission.csv',index=False)
 
     
 

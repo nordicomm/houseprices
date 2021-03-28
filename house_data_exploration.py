@@ -74,4 +74,32 @@ def understanding_data(all_data, train_old, test_old):
     # hm = sns.heatmap(cm, cbar=True, annot=True, square=True, fmt='.1f', annot_kws={'size': 6}, yticklabels=cols.values, xticklabels=cols.values)
     # plt.show()
     
+def further_understanding(df):
+    '''
+    divide the data based on the GrLivArea
+    where ['GrLivArea'] >= 1776
+    '''
+    # X_train = df_train.drop(['SalePrice'],axis=1)
+    # X_test =  df_test
+    # y = df_train['SalePrice']
+    
+    # save copy of the training data
+    X_train1  = df.copy()
+    X_train2  = df.copy()
+    
+    #dividing data into two parts. 
+    X_train1.drop(X_train1.loc[X_train1['GrLivArea'] >= 1776].index, inplace=True)
+    X_train2.drop(X_train2.loc[X_train2['GrLivArea'] < 1776].index, inplace=True)    
+      
+    # print("further_understanding")
+    # print(X_train1.describe())
+    # print(X_train2.describe())
+
+    # #append logic
+    # X_train = X_train1.append(X_train2, ignore_index = True)
+    # X_train = X_train.sort_values(by = ['Id'])
+    
+
+    return X_train1, X_train2
+    
     

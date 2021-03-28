@@ -49,14 +49,17 @@ def data_regularization(df_train, df_test, redo_modeling_flag, model_number):
     '''
     print("regularization section: ", df_train.shape)
 
-    #creating matrices for sklearn:
-    X_train = df_train.drop(['SalePrice'],axis=1)
+    #creating matrices for sklearn:     
+    X_train = df_train.drop(['SalePrice'],axis=1).copy()
+
+   
     X_test =  df_test
     y = df_train['SalePrice']
     
-    # print(X_train.head())
-    # print(X_test.head())
-    # print(y)
+    print("Data Regularization")
+    print(X_train.head())
+    print(X_test.head())
+    print(y)
     
     # running models
     predict_y = y
@@ -81,6 +84,8 @@ def data_regularization(df_train, df_test, redo_modeling_flag, model_number):
     return predict_y
 
 # end of data regularization function
+
+
 
 def lasso_model(X_train, y, X_test):
     '''

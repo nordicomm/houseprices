@@ -33,7 +33,7 @@ from os import path
 
 ''' /* Division from the main code */ '''
 
-def understanding_missing_data(train, test):
+def understanding_missing_data(train, test, calculate_flag):
     '''
     In order to understand missing data, we follow following steps:
         i. understand the data
@@ -48,7 +48,7 @@ def understanding_missing_data(train, test):
     check_train_path = path.exists(train_f)
     check_test_path = path.exists(test_f)
 
-    if  check_train_path and check_test_path == True:
+    if  check_train_path and check_test_path == True and calculate_flag == False:
         df_train = pd.read_csv("./train_formulated.csv")
         print("Missing analysis already done for train:-) ")
         print("df_train.shape: ", df_train.shape)
