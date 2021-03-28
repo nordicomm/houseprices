@@ -56,8 +56,8 @@ def understanding_data(all_data, train_old, test_old):
     all_data[skewed_feats] = np.log1p(all_data[skewed_feats])
     
      # separating the data 
-    df_train = all_data.iloc[:len(train_old), :]
-    df_test = all_data.iloc[len(train_old):, :]
+    df_train = all_data.iloc[:len(train_old), :].copy()
+    df_test = all_data.iloc[len(train_old):, :].copy()
     
     #drop the SalePrice data from df_test
     df_test.drop(['SalePrice'], axis = 1, inplace = True)

@@ -56,10 +56,10 @@ def data_regularization(df_train, df_test, redo_modeling_flag, model_number):
     X_test =  df_test
     y = df_train['SalePrice']
     
-    print("Data Regularization")
-    print(X_train.head())
-    print(X_test.head())
-    print(y)
+    # print("Data Regularization")
+    # print(X_train.head())
+    # print(X_test.head())
+    # print(y)
     
     # running models
     predict_y = y
@@ -79,6 +79,7 @@ def data_regularization(df_train, df_test, redo_modeling_flag, model_number):
     if int(model_number / 1000) == 1:
         predict_y_elasticn = elasticn_model(X_train, y, X_test)
         predict_y = predict_y_elasticn
+
 
     
     return predict_y

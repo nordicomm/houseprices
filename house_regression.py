@@ -39,8 +39,12 @@ test = pd.read_csv("./test.csv")
 calculate_flag = True
 df_train, df_test = understanding_missing_data(train, test, calculate_flag)
 
-# df_train_1, df_train_2 = further_understanding(df_train)
-# df_test_1, df_test_2 = further_understanding(df_test)
+df_train_1, df_train_2 = further_understanding(df_train)
+
+
+
+df_test_1, df_test_2 = further_understanding(df_test)
+
 
 
     
@@ -52,9 +56,14 @@ df_train, df_test = understanding_missing_data(train, test, calculate_flag)
     For this purpose, we have concatinated both train and test data together
     
 '''
-# all_data_1 = handle_categorical_features(df_train_2, df_test_2)
-# all_data_2 = handle_categorical_features(df_train_2, df_test_2)
+all_data_1 = handle_categorical_features(df_train_1, df_test_1)
+all_data_2 = handle_categorical_features(df_train_2, df_test_2)
 all_data_complete = handle_categorical_features(df_train, df_test)
+
+print("Checking Data")
+print("all_data_1: ", all_data_1.shape)
+print("all_data_2: ", all_data_2.shape)
+print("all_data_complete: ", all_data_complete.shape)
 
 
 '''
@@ -63,9 +72,10 @@ all_data_complete = handle_categorical_features(df_train, df_test)
 '''
 
 
-# df_train_n1, df_test_n1 = understanding_data(all_data_1, df_train_1, df_test_1)
-# df_train_n2, df_test_n2 = understanding_data(all_data_1, df_train_2, df_test_2)
+df_train_n1, df_test_n1 = understanding_data(all_data_1, df_train_1, df_test_1)
+df_train_n2, df_test_n2 = understanding_data(all_data_2, df_train_2, df_test_2)
 df_train_n, df_test_n = understanding_data(all_data_complete, df_train, df_test)
+
 
 
 
@@ -92,15 +102,15 @@ model_number = 100
 # model number: change the model number here
 
 
-# y_pred_1 = data_regularization(df_train_n1, df_test_n1, redo_modeling_flag, model_number)
-# y_pred_2 = data_regularization(df_train_n2, df_test_n2, redo_modeling_flag, model_number)
+y_pred_1 = data_regularization(df_train_n1, df_test_n1, redo_modeling_flag, model_number)
+y_pred_2 = data_regularization(df_train_n2, df_test_n2, redo_modeling_flag, model_number)
 y_pred = data_regularization(df_train_n, df_test_n, redo_modeling_flag, model_number)
 
-# y_pred_append = y_pred_1.append(y_pred_2, ignore_index = True)
-# y_pred_append = y_pred_append.sort_values(by = ['Id'])
+y_pred_append = y_pred_1.append(y_pred_2, ignore_index = True)
+y_pred_append = y_pred_append.sort_values(by = ['Id'])
 
-# print(y_pred_append.head(10))
-# print(y_pred_append.tail(10))
+print(y_pred_append.head(10))
+print(y_pred_append.tail(10))
 
       
 #sns.distplot(y_pred);
