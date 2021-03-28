@@ -106,19 +106,22 @@ def lasso_model(X_train, y, X_test):
     coef = pd.Series(model_lasso.coef_, index = X_train.columns)
     print("Lasso picked " + str(sum(coef != 0)) + " variables and eliminated the other " +  str(sum(coef == 0)) + " variables")
 
-    # imp_coef = pd.concat([coef.sort_values().head(10),
-    #                  coef.sort_values().tail(10)])
+    imp_coef = pd.concat([coef.sort_values().head(30),
+                      coef.sort_values().tail(30)])
     
-    # matplotlib.rcParams['figure.figsize'] = (8.0, 10.0)
-    # imp_coef.plot(kind = "barh")
-    # plt.title("Coefficients in the Lasso Model")
+    print()
+    print("Important Coefficients: ")
+    print(imp_coef.head(10))
+    
+    matplotlib.rcParams['figure.figsize'] = (8.0, 10.0)
+    imp_coef.plot(kind = "barh")
+    plt.title("Coefficients in the Lasso Model")
     
     
     lasso_yhat = np.expm1(model_lasso.predict(X_test))
     pred = pd.DataFrame(lasso_yhat)
-    
-    print(pred.head(20))
-        
+    #pred['Id'] = X_test['Id']
+            
     return pred
 
 

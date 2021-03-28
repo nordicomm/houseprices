@@ -39,11 +39,8 @@ test = pd.read_csv("./test.csv")
 calculate_flag = True
 df_train, df_test = understanding_missing_data(train, test, calculate_flag)
 
-df_train_1, df_train_2 = further_understanding(df_train)
-
-
-
-df_test_1, df_test_2 = further_understanding(df_test)
+#df_train_1, df_train_2 = further_understanding(df_train)
+#df_test_1, df_test_2 = further_understanding(df_test)
 
 
 
@@ -56,8 +53,8 @@ df_test_1, df_test_2 = further_understanding(df_test)
     For this purpose, we have concatinated both train and test data together
     
 '''
-all_data_1 = handle_categorical_features(df_train_1, df_test_1)
-all_data_2 = handle_categorical_features(df_train_2, df_test_2)
+#all_data_1 = handle_categorical_features(df_train_1, df_test_1)
+#all_data_2 = handle_categorical_features(df_train_2, df_test_2)
 all_data_complete = handle_categorical_features(df_train, df_test)
 
 print("Checking Data")
@@ -72,8 +69,8 @@ print("all_data_complete: ", all_data_complete.shape)
 '''
 
 
-df_train_n1, df_test_n1 = understanding_data(all_data_1, df_train_1, df_test_1)
-df_train_n2, df_test_n2 = understanding_data(all_data_2, df_train_2, df_test_2)
+#df_train_n1, df_test_n1 = understanding_data(all_data_1, df_train_1, df_test_1)
+#df_train_n2, df_test_n2 = understanding_data(all_data_2, df_train_2, df_test_2)
 df_train_n, df_test_n = understanding_data(all_data_complete, df_train, df_test)
 
 
@@ -102,30 +99,44 @@ model_number = 100
 # model number: change the model number here
 
 
-y_pred_1 = data_regularization(df_train_n1, df_test_n1, redo_modeling_flag, model_number)
-y_pred_2 = data_regularization(df_train_n2, df_test_n2, redo_modeling_flag, model_number)
-y_pred = data_regularization(df_train_n, df_test_n, redo_modeling_flag, model_number)
+#y_pred_1 = data_regularization(df_train_n1, df_test_n1, redo_modeling_flag, model_number)
+#y_pred_2 = data_regularization(df_train_n2, df_test_n2, redo_modeling_flag, model_number)
+y_pred_lasso = data_regularization(df_train_n, df_test_n, redo_modeling_flag, model_number)
+y_pred_xgb = data_regularization(df_train_n, df_test_n, False, 10)
+y_pred_ridge = data_regularization(df_train_n, df_test_n, False, 1)
 
-y_pred_append = y_pred_1.append(y_pred_2, ignore_index = True)
-y_pred_append = y_pred_append.sort_values(by = ['Id'])
 
-print(y_pred_append.head(10))
-print(y_pred_append.tail(10))
+# pred_int = [0] * len(test)
+# counter = 0
 
-      
-#sns.distplot(y_pred);
+# for idx in df_test_1['Id']:
+#     pred_int[idx-1460] = y_pred_1[0][counter]
+#     counter += 1
+
+# counter = 0
+# for idx in df_test_2['Id']:
+#     if counter < 318:
+#         pred_int[idx-1460] = y_pred_2[0][counter]
+#     counter += 1
+
+
+y_pred = 0.7 * y_pred_lasso[0] + 0.3 * y_pred_ridge[0]
+# RMSE error: 0.12773
+
+
+
 
 '''
     6- saving the results into submission file. 
 
 '''
 
-# pred = pd.DataFrame(y_pred)
+pred = pd.DataFrame(y_pred)
 
-# read_sub_df=pd.read_csv('sample_submission.csv')
-# datasets=pd.concat([read_sub_df['Id'],pred],axis=1)
-# datasets.columns=['Id','SalePrice']
-# datasets.to_csv('sample_submission.csv',index=False)
+read_sub_df=pd.read_csv('sample_submission.csv')
+datasets=pd.concat([read_sub_df['Id'],pred],axis=1)
+datasets.columns=['Id','SalePrice']
+datasets.to_csv('sample_submission.csv',index=False)
 
     
 
